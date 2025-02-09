@@ -107,9 +107,34 @@ def remove_duplicates(data):
     :param data: pandas DataFrame
     :return: pandas DataFrame
     """
-    # TODO: Remove duplicate rows
-    pass
+    messy_data_removed_duplicates = data.drop_duplicates()
+    return messy_data_removed_duplicates.reset_index(drop=True)
 
+def remove_duplicates_test():
+    test_dataframe = pd.DataFrame({
+        'Col1': [23, 45, 67, 89, 23, 34, 76, 23, 90, 23],
+        'Col2': [56, 78, 78, 12, 56, 67, 89, 56, 23, 56],
+        'Col3': [34, 34, 56, 78, 34, 12, 45, 34, 67, 34],
+        'Col4': [12, 23, 34, 12, 12, 78, 90, 12, 45, 12],
+        'Col5': [67, 89, 78, 12, 67, 34, 56, 67, 78, 67]
+    })
+    expected_dataframe = pd.DataFrame({
+        'Col1': [23, 45, 67, 89, 34, 76, 90],
+        'Col2': [56, 78, 78, 12, 67, 89, 23],
+        'Col3': [34, 34, 56, 78, 12, 45, 67],
+        'Col4': [12, 23, 34, 12, 78, 90, 45],
+        'Col5': [67, 89, 78, 12, 34, 56, 78]
+    })
+
+    actual_dataframe = remove_duplicates(test_dataframe)
+
+    #print("Actual DataFrame:\n", actual_dataframe)
+    #print("Expected DataFrame:\n", expected_dataframe)
+    #print(actual_dataframe.dtypes)
+    #print(expected_dataframe.dtypes)
+
+    assert actual_dataframe.equals(expected_dataframe)
+    
 # 3. Normalize Numerical Data
 def normalize_data(data,method='minmax'):
     """Apply normalization to numerical features.
