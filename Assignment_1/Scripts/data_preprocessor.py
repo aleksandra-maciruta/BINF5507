@@ -189,9 +189,34 @@ def remove_redundant_features(data, threshold=0.9):
     :return: pandas DataFrame
     """
     absolute_values = data.corr().abs()
-    # TODO: Remove redundant features based on the correlation threshold (HINT: you can use the corr() method)
-    pass
+    upper_triangle = absolute_values.where(np.triu(np.ones(absolute_values.shape), k=1).astype(bool))
+    
+    messy_data_drop = set()
+    for column in upper_triangle.columns:
+        if any(upper_triangle[column] > threshold):
+            messy_data_drop.add(column)
+            
+    print("Dropping columns:", messy_data_drop)
+    
+    return data.drop(columns=list(messy_data_drop))
 
+def remove_redundant_features_test():
+    test_dataframe = pd.DataFrame({
+    'A': [1, 2, 3, 4, 5],
+    'B': [2, 4, 6, 8, 10],
+    'C': [5, 3, 6, 2, 7],
+    'D': [10, 20, 30, 40, 50],
+    'E': [9, 7, 5, 3, 1]
+    })
+    expected_dataframe = pd.DataFrame({
+    'A': [1, 2, 3, 4, 5],
+    'C': [5, 3, 6, 2, 7]
+    })
+
+    actual_dataframe = remove_redundant_features(test_dataframe, threshold=0.9)
+    print("Expected DataFrame:\n", expected_dataframe)
+    print("Actual DataFrame:\n", actual_dataframe)
+    assert actual_dataframe.equals(expected_dataframe)
 # ---------------------------------------------------
 
 def simple_model(input_data, split_data=True, scale_data=False, print_report=False):
