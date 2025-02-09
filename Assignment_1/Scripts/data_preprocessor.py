@@ -145,17 +145,17 @@ def normalize_data(data,method='minmax'):
     python_numeric_types = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
     messy_data_numeric_columns = data.select_dtypes(include=python_numeric_types)
 
-    if method == 'minmax':
-        scaler = MinMaxScaler()
-    else:
+    if method == 'standard':
         scaler = StandardScaler()
+    else:
+        scaler = MinMaxScaler()
 
     messy_data_scaled = data.copy()
     messy_data_scaled = scaler.fit_transform(messy_data_numeric_columns)
 
     return messy_data_scaled
 
-def normalize_data_test():
+def normalize_data_test_minmax():
     test_dataframe = pd.DataFrame({
     'Feature1': [10, 20, 30, 40, 50],
     'Feature2': [5, 15, 25, 35, 45],
@@ -165,6 +165,19 @@ def normalize_data_test():
     print(test_dataframe)
 
     normalized_data = normalize_data(test_dataframe, method='minmax')
+    print("\nNormalized DataFrame:")
+    print(normalized_data)
+
+def normalize_data_test_StandardScaler():
+    test_dataframe = pd.DataFrame({
+    'Feature1': [5, 10, 15, 20, 25],
+    'Feature2': [50, 60, 70, 80, 90],
+    'Feature3': [1000, 2000, 3000, 4000, 5000]
+})
+    print("Original DataFrame:")
+    print(test_dataframe)
+
+    normalized_data = normalize_data(test_dataframe, method='standard')
     print("\nNormalized DataFrame:")
     print(normalized_data)
 
