@@ -2,4 +2,6 @@
 .DS_Store
 
 # Python
-Assignment_1/Scripts/__pycache__
+Assignment_1/Scripts/__pycache__/
+venv/
+**/.ipynb_checkpoints/

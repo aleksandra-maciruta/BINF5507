@@ -1,0 +1,19 @@
+[project]
+authors = ["Aleksandra <137651489+aleksandra-maciruta@users.noreply.github.com>"]
+channels = ["conda-forge"]
+description = "BINF5507 Assignments"
+name = "BINF5507"
+platforms = ["osx-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+scikit-learn = ">=1.6.1,<2"
+jupyter = ">=1.1.1,<2"
+ipykernel = ">=6.29.5,<7"
+pandas = ">=2.2.3,<3"
+numpy = ">=2.2.2,<3"
+seaborn = ">=0.13.2,<0.14"
+matplotlib = ">=3.10.0,<4"
+scipy = ">=1.15.1,<2"
