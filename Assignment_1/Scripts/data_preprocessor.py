@@ -29,7 +29,7 @@ def impute_missing_values(data, strategy='mean', exclude_columns=[]):
     elif strategy == 'mode':
         fill_values = messy_data_numeric_columns[numeric_nullable_relevant_column_names].mode(axis=0, numeric_only=True, dropna=True).head(1).values.flatten().tolist()
     else: 
-        raise Exception("Only enter mean, median, mode")
+        raise Exception('Only enter mean, median, mode')
 
     columns_fill_na_values = list(zip(numeric_nullable_relevant_column_names, fill_values))
 
@@ -135,32 +135,41 @@ def remove_duplicates_test():
     # print(expected_dataframe.dtypes)
 
     assert actual_dataframe.equals(expected_dataframe)
-    
+
 # 3. Normalize Numerical Data
-def normalize_data(data,method='minmax'):
+def normalize_data(data, method='minmax', exclude_columns=[]):
     """Apply normalization to numerical features.
     :param data: pandas DataFrame
     :param method: str, normalization method ('minmax' (default) or 'standard')
+    :return: pandas DataFrame
     """
     python_numeric_types = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
     messy_data_numeric_columns = data.select_dtypes(include=python_numeric_types)
+    messy_data_relavent_numeric_columns = messy_data_numeric_columns.drop(exclude_columns)
 
     if method == 'standard':
         scaler = StandardScaler()
-    else:
+    elif method == 'minmax':
         scaler = MinMaxScaler()
+    else:
+        raise Exception("Only enter standard or minmax")
 
     messy_data_scaled = data.copy()
-    messy_data_scaled = scaler.fit_transform(messy_data_numeric_columns)
+    messy_data_scaled = scaler.fit_transform(messy_data_relavent_numeric_columns)
+    messy_data_dataframe = pd.DataFrame(messy_data_scaled, columns=messy_data_relavent_numeric_columns.columns, index=data.index)
 
-    return messy_data_scaled
+    # Preserve non-numeric columns by merging
+    final_df = data.copy()
+    final_df[messy_data_dataframe.columns] = messy_data_dataframe
+
+    return final_df
 
 def normalize_data_test_minmax():
     test_dataframe = pd.DataFrame({
-    'Feature1': [10, 20, 30, 40, 50],
-    'Feature2': [5, 15, 25, 35, 45],
-    'Feature3': [100, 200, 300, 400, 500]
-})
+        'Feature1': [10, 20, 30, 40, 50],
+        'Feature2': [5, 15, 25, 35, 45],
+        'Feature3': [100, 200, 300, 400, 500]
+    })
     print("Original DataFrame:")
     print(test_dataframe)
 
@@ -170,10 +179,10 @@ def normalize_data_test_minmax():
 
 def normalize_data_test_StandardScaler():
     test_dataframe = pd.DataFrame({
-    'Feature1': [5, 10, 15, 20, 25],
-    'Feature2': [50, 60, 70, 80, 90],
-    'Feature3': [1000, 2000, 3000, 4000, 5000]
-})
+        'Feature1': [5, 10, 15, 20, 25],
+        'Feature2': [50, 60, 70, 80, 90],
+        'Feature3': [1000, 2000, 3000, 4000, 5000]
+    })
     print("Original DataFrame:")
     print(test_dataframe)
 
@@ -181,36 +190,37 @@ def normalize_data_test_StandardScaler():
     print("\nNormalized DataFrame:")
     print(normalized_data)
 
-# 4. Remove Redundant Features   
+# 4. Remove Redundant Features
 def remove_redundant_features(data, threshold=0.9):
     """Remove redundant or duplicate columns.
     :param data: pandas DataFrame
     :param threshold: float, correlation threshold
     :return: pandas DataFrame
     """
-    absolute_values = data.corr().abs()
+    python_numeric_types = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
+    messy_data_numeric_columns = data.select_dtypes(include=python_numeric_types)
+
+    absolute_values = messy_data_numeric_columns.corr().abs()
     upper_triangle = absolute_values.where(np.triu(np.ones(absolute_values.shape), k=1).astype(bool))
-    
+
     messy_data_drop = set()
     for column in upper_triangle.columns:
         if any(upper_triangle[column] > threshold):
             messy_data_drop.add(column)
-            
-    print("Dropping columns:", messy_data_drop)
-    
-    return data.drop(columns=list(messy_data_drop))
+
+    return data.drop(columns=list(messy_data_drop), errors='ignore')
 
 def remove_redundant_features_test():
     test_dataframe = pd.DataFrame({
-    'A': [1, 2, 3, 4, 5],
-    'B': [2, 4, 6, 8, 10],
-    'C': [5, 3, 6, 2, 7],
-    'D': [10, 20, 30, 40, 50],
-    'E': [9, 7, 5, 3, 1]
+        'A': [1, 2, 3, 4, 5],
+        'B': [2, 4, 6, 8, 10],
+        'C': [5, 3, 6, 2, 7],
+        'D': [10, 20, 30, 40, 50],
+        'E': [9, 7, 5, 3, 1]
     })
     expected_dataframe = pd.DataFrame({
-    'A': [1, 2, 3, 4, 5],
-    'C': [5, 3, 6, 2, 7]
+        'A': [1, 2, 3, 4, 5],
+        'C': [5, 3, 6, 2, 7]
     })
 
     actual_dataframe = remove_redundant_features(test_dataframe, threshold=0.9)
@@ -260,7 +270,7 @@ def simple_model(input_data, split_data=True, scale_data=False, print_report=Fal
         # scale the data
         X_train = normalize_data(X_train)
         X_test = normalize_data(X_test)
-        
+
     # instantiate and fit the model
     log_reg = LogisticRegression(random_state=42, max_iter=100, solver='liblinear', penalty='l2', C=1.0)
     log_reg.fit(X_train, y_train)
@@ -271,7 +281,7 @@ def simple_model(input_data, split_data=True, scale_data=False, print_report=Fal
     report = classification_report(y_test, y_pred)
 
     print(f'Accuracy: {accuracy}')
-    
+
     # if specified, print the classification report
     if print_report:
         print('Classification Report:')
