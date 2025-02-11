@@ -7,6 +7,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, accuracy_score
 
 # 1. Impute Missing Values
+# I included the exclude parameter incase to exclude the target column since there are downstream effects if you try to run the simple model later.
+# I noticed if you use the strategy='mean' the simple model will not work I assume because the target column cannot have anything but the descrete values and by running this specific imputation you will get decimal values which th model will not take.
 def impute_missing_values(data, strategy='mean', exclude_columns=[]):
     """
     Fill missing values in the dataset.
@@ -14,9 +16,11 @@ def impute_missing_values(data, strategy='mean', exclude_columns=[]):
     :param strategy: str, imputation method ('mean', 'median', 'mode')
     :return: pandas DataFrame
     """
+    # Imputation will only work on numeric types so I need to select only the columns in my dataset that are numerical.
     python_numeric_types = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
     messy_data_numeric_columns = data.select_dtypes(include=python_numeric_types)
-
+    
+    #I need so select 
     numeric_columns_nullability = messy_data_numeric_columns.isna().any()
     numeric_nullable_columns = numeric_columns_nullability[numeric_columns_nullability == True]
     numeric_nullable_relevant_columns = numeric_nullable_columns.drop(exclude_columns)
