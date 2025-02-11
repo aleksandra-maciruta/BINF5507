@@ -5,7 +5,18 @@
 To run `Scripts/main.ipynb`, run the following commands:
 
 ```shell
-
+brew install pixi
+pixi
+pixi init
+pixi add jupiter
+pixi add ipykernel
+pixi add pandas
+pixi add numpy
+pixi add seaborn
+pixi add matplotlib
+pixi add scipy
+pixi add scikit-learn
+pixi run python -m ipykernel install --user --name=pixi-env --display-name "Python (Pixi)
 ```
 
 <!-- ```shell
