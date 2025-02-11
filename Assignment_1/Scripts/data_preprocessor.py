@@ -8,7 +8,8 @@ from sklearn.metrics import classification_report, accuracy_score
 
 # 1. Impute Missing Values
 # I included the exclude parameter incase to exclude the target column since there are downstream effects if you try to run the simple model later.
-# I noticed if you use the strategy='mean' the simple model will not work I assume because the target column cannot have anything but the descrete values and by running this specific imputation you will get decimal values which th model will not take.
+# I noticed if you use the strategy='mean' the simple model will not work because the target column cannot have anything but the descrete values and by running this specific imputation you will get decimal values which is a data type this logistic regression model will not take as it only predicts categorical. 
+
 def impute_missing_values(data, strategy='mean', exclude_columns=[]):
     """
     Fill missing values in the dataset.
@@ -16,15 +17,16 @@ def impute_missing_values(data, strategy='mean', exclude_columns=[]):
     :param strategy: str, imputation method ('mean', 'median', 'mode')
     :return: pandas DataFrame
     """
-    # Imputation will only work on numeric types so I need to select only the columns in my dataset that are numerical.
+    # Imputation will only work on numeric types so I select only the columns in my dataset that are numerical.
     python_numeric_types = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
     messy_data_numeric_columns = data.select_dtypes(include=python_numeric_types)
     
-    #I need so select 
+    # I select only the columns that have null values.
     numeric_columns_nullability = messy_data_numeric_columns.isna().any()
     numeric_nullable_columns = numeric_columns_nullability[numeric_columns_nullability == True]
     numeric_nullable_relevant_columns = numeric_nullable_columns.drop(exclude_columns)
 
+    # Conditional statements for the mean, median, and mode strategies.
     numeric_nullable_relevant_column_names = list(numeric_nullable_relevant_columns.index)
     if strategy == 'mean':
         fill_values = messy_data_numeric_columns[numeric_nullable_relevant_column_names].mean(numeric_only=True, skipna=True)
@@ -39,11 +41,18 @@ def impute_missing_values(data, strategy='mean', exclude_columns=[]):
 
     messy_data_filled_na = data.copy()
 
+    # For loop to interate and fill all the missing values.
     for column_name, fill_na_value in columns_fill_na_values:
         messy_data_filled_na[column_name] = messy_data_filled_na[column_name].fillna(fill_na_value)
-
+        
+    # The function will return the filled messy_dataset.
     return messy_data_filled_na
 
+# I created simple test functions to test if my impute_missing_values(data) function would work on each strategy on a simple dataframe.
+# In each case I create a test_dataframe that needs to be modified to fit an expected_dataframe.
+# If the two dataframes equal then the test passes.
+
+# This is the test for the mean strategy.
 def impute_missing_values_mean_test():
     test_dataframe = pd.DataFrame({
         'Col1': [23, 45, 67, 89, np.nan, 34, 76, np.nan, 90, 12],
@@ -64,6 +73,7 @@ def impute_missing_values_mean_test():
 
     assert actual_dataframe.equals(expected_dataframe)
 
+# This is the test for the median strategy.
 def impute_missing_values_median_test():
     test_dataframe = pd.DataFrame({
         'Col1': [23, 45, 67, 89, np.nan, 34, 76, np.nan, 90, 12],
@@ -84,6 +94,7 @@ def impute_missing_values_median_test():
 
     assert actual_dataframe.equals(expected_dataframe)
 
+# This is the test for the mode strategy.
 def impute_missing_values_mode_test():
     test_dataframe = pd.DataFrame({
         'Col1': [23, 45, 67, 89, np.nan, 34, 76, np.nan, 90, 12],
@@ -112,8 +123,12 @@ def remove_duplicates(data):
     :return: pandas DataFrame
     """
     messy_data_removed_duplicates = data.drop_duplicates()
+    # I needed to make sure that when removing the duplicates the indices of the dataframe also changed otherwise it is not logical since the data frame would still utilize the original indicies. 
     return messy_data_removed_duplicates.reset_index(drop=True)
 
+# I created a simple test function to test if my remove_duplicates(data) function would work on a simple dataframe.
+# I created a test_dataframe that needs to be modified to fit an expected_dataframe.
+# If the two dataframes equal then the test passes.
 def remove_duplicates_test():
     test_dataframe = pd.DataFrame({
         'Col1': [23, 45, 67, 89, 23, 34, 76, 23, 90, 23],
@@ -141,16 +156,20 @@ def remove_duplicates_test():
     assert actual_dataframe.equals(expected_dataframe)
 
 # 3. Normalize Numerical Data
+
+# I decided to add the exclude columns incase someone wanted to use the parameter but it is not necessary for this assignment.
 def normalize_data(data, method='minmax', exclude_columns=[]):
     """Apply normalization to numerical features.
     :param data: pandas DataFrame
     :param method: str, normalization method ('minmax' (default) or 'standard')
     :return: pandas DataFrame
     """
+    # Normalization will only work on numeric types so I select only the columns in my dataset that are numerical.
     python_numeric_types = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
     messy_data_numeric_columns = data.select_dtypes(include=python_numeric_types)
     messy_data_relavent_numeric_columns = messy_data_numeric_columns.drop(exclude_columns)
 
+    # Conditional statements for the standard and minmax methods.
     if method == 'standard':
         scaler = StandardScaler()
     elif method == 'minmax':
@@ -160,14 +179,22 @@ def normalize_data(data, method='minmax', exclude_columns=[]):
 
     messy_data_scaled = data.copy()
     messy_data_scaled = scaler.fit_transform(messy_data_relavent_numeric_columns)
+    
+    # This block of code needed to be written because there was an issue where my dataframe was being transformed into a numpy array. This creates challenges for the next preprocessing step as a numpy array is not a data type that I can input.
+    # Here I make sure that the output I will get is a dataframe.
     messy_data_dataframe = pd.DataFrame(messy_data_scaled, columns=messy_data_relavent_numeric_columns.columns, index=data.index)
 
-    # Preserve non-numeric columns by merging
-    final_df = data.copy()
-    final_df[messy_data_dataframe.columns] = messy_data_dataframe
+    # Below I am preserving object data type columns by merging
+    final_messy_df = data.copy()
+    final_messy_df[messy_data_dataframe.columns] = messy_data_dataframe
 
-    return final_df
+    return final_messy_df
 
+# I created a simple test function to test if my normalize_data(data) function would work with my minmax and standard methods on a simple dataframe.
+# I created a test_dataframe that needs to be modified.
+# I print the original and new processed data to manually look at the difference and if the difference is what I expect the test passes.
+
+# This is a test for the minmax strategy
 def normalize_data_test_minmax():
     test_dataframe = pd.DataFrame({
         'Feature1': [10, 20, 30, 40, 50],
@@ -181,6 +208,7 @@ def normalize_data_test_minmax():
     print("\nNormalized DataFrame:")
     print(normalized_data)
 
+# This is a test for the standard strategy
 def normalize_data_test_StandardScaler():
     test_dataframe = pd.DataFrame({
         'Feature1': [5, 10, 15, 20, 25],
@@ -201,19 +229,28 @@ def remove_redundant_features(data, threshold=0.9):
     :param threshold: float, correlation threshold
     :return: pandas DataFrame
     """
+    # Redundancy removal will only work on numeric types so I select only the columns in my dataset that are numerical.
     python_numeric_types = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
     messy_data_numeric_columns = data.select_dtypes(include=python_numeric_types)
 
+    # Here I am creating a correlation matrix of absolute correlation values. 
     absolute_values = messy_data_numeric_columns.corr().abs()
+    
+    # Here I am selecting the upper triangle matrix to not include the diagonal values.
     upper_triangle = absolute_values.where(np.triu(np.ones(absolute_values.shape), k=1).astype(bool))
 
+    # Here I have a for loop that iterates through the columns and drops a column if it is highly correlated with another column beyond the threshold provided (0.9).
     messy_data_drop = set()
     for column in upper_triangle.columns:
         if any(upper_triangle[column] > threshold):
             messy_data_drop.add(column)
 
+    # errors='ignore' is there incase the function tries to drop non-existant columns.
     return data.drop(columns=list(messy_data_drop), errors='ignore')
 
+# I created a simple test function to test if my remove_redundant_features(data) function would work on a simple dataframe.
+# I created a test_dataframe that needs to be modified to fit an expected_dataframe.
+# If the two dataframes equal then the test passes.
 def remove_redundant_features_test():
     test_dataframe = pd.DataFrame({
         'A': [1, 2, 3, 4, 5],
