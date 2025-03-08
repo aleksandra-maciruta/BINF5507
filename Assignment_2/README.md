@@ -2,7 +2,7 @@
 
 ## How to run
 
-To run `Scripts/main.ipynb`, run the following commands:
+To run `*/Scripts/main.ipynb`, run the following commands:
 
 ```shell
 brew install pixi
