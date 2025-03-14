@@ -42,8 +42,19 @@ pixi run python ./Assignment_1/Scripts/run_tests.py
 ## Useful links
 # For pixi
 - https://pixi.sh/latest/basic_usage/
+# For ML models
+https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.ElasticNet.html
+https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html
+https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html
+# For metrics
+https://scikit-learn.org/stable/modules/generated/sklearn.metrics.accuracy_score.html
+https://scikit-learn.org/stable/modules/generated/sklearn.metrics.f1_score.html
+https://scikit-learn.org/stable/modules/generated/sklearn.metrics.auc.html
+https://scikit-learn.org/stable/modules/generated/sklearn.metrics.average_precision_score.html
 # For visualizations
-- https://matplotlib.org/stable/api/pyplot_summary.html
-- https://seaborn.pydata.org/generated/seaborn.pairplot.html
-# For redundancy removal
-- https://www.projectpro.io/recipes/drop-out-highly-correlated-features-in-python 
+https://seaborn.pydata.org/generated/seaborn.heatmap.html
+https://scikit-learn.org/stable/modules/generated/sklearn.metrics.roc_curve.html
+https://scikit-learn.org/stable/modules/generated/sklearn.metrics.roc_auc_score.html
+https://scikit-learn.org/stable/modules/generated/sklearn.metrics.precision_recall_curve.html
+
+
