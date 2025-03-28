@@ -38,12 +38,12 @@ pixi run python -m ipykernel install --user --name=pixi-env --display-name "Pyth
 # For pixi
 - https://pixi.sh/latest/basic_usage/
 # For ML models
-https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html
-https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html
-https://scikit-learn.org/stable/modules/generated/sklearn.cluster.AgglomerativeClustering.html
+- https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html
+- https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html
+- https://scikit-learn.org/stable/modules/generated/sklearn.cluster.AgglomerativeClustering.html
 # For Data sets
-https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_blobs.html
-https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_circles.html
-https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_moons.html
+- https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_blobs.html
+- https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_circles.html
+- https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_moons.html
 # For Visualization
-https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html
+- https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html
