@@ -25,6 +25,7 @@ pixi add scipy
 pixi add scikit-learn
 pixi add lifelines
 pixi add pathlib
+pixi add openpyxl
 pixi run python -m ipykernel install --user --name=pixi-env --display-name "Python (Pixi)"
 ```
 
