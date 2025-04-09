@@ -61,3 +61,4 @@ pixi run python -m ipykernel install --user --name=pixi-env --display-name "Pyth
 - https://lifelines.readthedocs.io/en/latest/fitters/regression/CoxPHFitter.html
 - https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html
 - https://www.kaggle.com/code/prashant111/random-forest-classifier-tutorial
+- https://scikit-survival.readthedocs.io/en/stable/user_guide/random-survival-forest.html
